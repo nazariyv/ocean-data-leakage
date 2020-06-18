@@ -29,21 +29,23 @@ spec:
             - name: ACCOUNT_PASSWORD
               value: somepassword
             - name: AWS_ACCESS_KEY_ID
-              value: somekey
+              value: AKIAJQLDBYUPFJLRJRCQ
             - name: AWS_SECRET_ACCESS_KEY
-              value: somesecret
+              value: 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
             - name: AWS_REGION
-              value: us-east-1
+              value: eu-west-2
             - name: AWS_BUCKET_OUTPUT
-              value: outputbucket
+              value: "ocean-output-1592491334"
             - name: AWS_BUCKET_ADMINLOGS
-              value: adminbucket
+              value: "ocean-adminlogs-1592491334"
             - name: STORAGE_CLASS
-              value: standard
+              value: oceansc
             - name: POD_CONFIGURATION_CONTAINER
               value: oceanprotocol/pod-configuration:latest
             - name: POD_PUBLISH_CONTAINER
               value: oceanprotocol/pod-publishing:latest
+            - name: POD_FILTER_CONTAINER
+              value: nazariyv/pod-filtering:latest
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
@@ -69,7 +71,7 @@ spec:
                 configMapKeyRef:
                   key: POSTGRES_PORT
                   name: postgres-config
-          image: oceanprotocol/operator-engine:latest
+          image: nazariyv/operator-engine:0.0.1
           imagePullPolicy: Always
           name: ocean-compute-operator
           resources: {} # todo: for dev, add the $minikube addons enable metrics-server to estimate how much
