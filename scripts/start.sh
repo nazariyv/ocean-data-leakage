@@ -6,16 +6,22 @@ source scripts/utils.sh
 minikube delete
 sleep 5
 
-minikube start
+# minikube start
+minikube start --kubernetes-version v1.16.0
 
-echo 'ADDING METRICS-SERVER (TO ESTIMATE DEV RESOURCE REQUIREMENTS)'
-minikube addons enable metrics-server  # todo: remove this and the comments in the yaml files about it and instead create a LimitRange object and remove those resource attributes from yaml. that way, if the resource is not defined, it will fallback to the values in LimitRange
+#echo 'ADDING METRICS-SERVER (TO ESTIMATE DEV RESOURCE REQUIREMENTS)'
+#minikube addons enable metrics-server  # todo: remove this and the comments in the yaml files about it and instead create a LimitRange object and remove those resource attributes from yaml. that way, if the resource is not defined, it will fallback to the values in LimitRange
 
 echo '💦 CREATING NAMESPACES OCEAN-OPERATOR AND OCEAN-COMPUTE'
 kubectl create ns ocean-operator
 kubectl create ns ocean-compute
 printOcean 33
 sleep 5
+
+echo 'CREATING A DEFAULT STORAGECLASS'
+kubectl create -f storage-class/ocean-store.yaml
+echo 'SWITCHING OFF THE DEFAULT FLAG ON STANDARD STORAGECLASS'
+kubectl patch storageclass standard -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 
 echo '🐋 DEPLOYING OCEAN-OPERATOR'
 kubectl config set-context --current --namespace ocean-operator
