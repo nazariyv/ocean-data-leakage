@@ -1,6 +1,6 @@
 .ipynb_checkpoints/
 .pytest_cache/
-.barge/
+barge/
 .mypy_cache/
 operator.yaml
 *.ipynb
