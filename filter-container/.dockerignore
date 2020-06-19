@@ -1,0 +1,7 @@
+**/tests/*
+.mypy_cache/*
+.pytest_cache/*
+**/*.md
+**/*.ini
+**/requirements.dev.txt
+**/.pylintrc
