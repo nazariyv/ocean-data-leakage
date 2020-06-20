@@ -1,7 +1,7 @@
-import pytest
+import pytest  # type: ignore
 import os
 
-from filter.encrypted import Entropy
+from filter.conditions.not_encrypted import Entropy
 
 
 def test_entropy_end_to_end_csv():
