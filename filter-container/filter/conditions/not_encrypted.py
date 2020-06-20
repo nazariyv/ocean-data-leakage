@@ -61,9 +61,11 @@ class Entropy:
         # clear results from any previously analyzed files
         self.results = []
 
-        file_length = os.path.getsize(file_loc)  # in bytes
+        file_size = os.path.getsize(file_loc)  # in bytes
 
-        block_size = file_length / self.DEFAULT_DATA_POINTS
+        l.debug(f"{file_size=}")
+
+        block_size = file_size / self.DEFAULT_DATA_POINTS
         # round up to the nearest DEFAULT_BLOCK_SIZE (1024)
         block_size = int(
             block_size
