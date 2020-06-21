@@ -6,7 +6,11 @@ import logging
 import json
 import os
 
-l = logging.getLogger("encrypted")
+from .utils import EntropyAlgos
+
+shannon = EntropyAlgos.shannon
+
+l = logging.getLogger("[encrypted]")
 
 EntropyOfBlock = namedtuple(
     "EntropyOfBlock", ["offset", "file", "entropy", "description"]
@@ -29,7 +33,7 @@ class Entropy:
     DEFAULT_DATA_POINTS: ClassVar[int] = 2048
 
     def __init__(self) -> None:
-        self.algorithm = self.shannon
+        self.algorithm = shannon
         self.results: List[EntropyOfBlock] = []
         self.block_size = None
 
@@ -86,7 +90,7 @@ class Entropy:
         with open(file_loc, "rb") as f:
             data = f.read(block_size)
             while data:
-                entropy = self.algorithm(data, block_size)
+                entropy = self.algorithm(data)
                 self.results.append(
                     EntropyOfBlock(
                         offset=(i * block_size),
@@ -98,39 +102,3 @@ class Entropy:
                 i += 1
                 l.debug(f"{i=}, last block entropy: {self.results[-1]=}")
                 data = f.read(block_size)
-
-    # ! if performance is slow we can multiprocess this in the future
-    @staticmethod
-    def shannon(data: bytes, block_size: Optional[int] = None) -> float:
-        """Shannon's entropy
-
-        Args:
-            data (bytes): data bytes
-            block_size (Optional[int], optional): block_size, used for logging if passed
-            Can be used for scaling blocks with fewer bytes in the future. Defaults to None.
-
-        Returns:
-            float: shannon's entropy of the byte block
-        """
-        entropy = 0.0
-
-        if data:
-            length = len(data)
-
-            # a byte is represented by 8 bits. 2 ^ 8 = 256
-            seen = dict(((chr(x), 0.0) for x in range(0, 256)))
-
-            for byte in data:
-                seen[chr(byte)] += 1.0
-
-            for v in seen.values():
-                p_x = v / length
-
-                if p_x > 0:
-                    entropy -= p_x * log(p_x, 2)
-
-        if block_size:
-            l.debug(f"{block_size=},{length=}")
-
-        # normalize the entropy 1 byte = 8 bits. Our entropy is per byte before normalization
-        return entropy / 8.0

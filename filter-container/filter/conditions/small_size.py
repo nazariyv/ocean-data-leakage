@@ -1,7 +1,9 @@
 import logging
 import os
 
-l = logging.getLogger("output_is_small_size")
+from .utils import validate_inputs_outputs
+
+l = logging.getLogger("[small_size]")
 
 DEFAULT_SMALLER_THAN_PCT = 0.1
 
@@ -76,15 +78,7 @@ class SmallSize:
             bool: True if it they are validated. Then we have succesffully assigned
             them as instance's attributes. Else, we log the error and we stop immediately.
         """
-        inputs = os.getenv("INPUTS")
-        outputs = os.getenv("OUTPUTS")
         size_threshold = float(os.getenv("SMALLER_THAN_PCT", self.size_threshold))
-
-        if not inputs:
-            l.error(
-                "INPUTS environment variable that points to the inputs data is not defined"
-            )
-            return False
 
         if size_threshold < 0.0 or size_threshold > 1.0:
             l.error(
@@ -92,14 +86,14 @@ class SmallSize:
             )
             return False
 
-        if not outputs:
-            l.error(
-                "OUTPUTS environment variable that points to the outputs is not defined"
-            )
+        self.size_threshold = size_threshold
+
+        is_valid = validate_inputs_outputs()
+
+        if not is_valid:
             return False
 
-        self.inputs = inputs
-        self.outputs = outputs
-        self.size_threshold = size_threshold
+        self.inputs = os.getenv("INPUTS")
+        self.outputs = os.getenv("OUTPUTS")
 
         return True
