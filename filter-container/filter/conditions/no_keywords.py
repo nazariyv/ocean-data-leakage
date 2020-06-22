@@ -5,30 +5,12 @@ import logging
 import confuse
 import pandas as pd
 from typing import List
-from pymongo import MongoClient
 
 from filter.conditions.utils import validate_inputs_outputs, dataCategory
 
 l = logging.getLogger("[no_keywords]")
 
 SUPPORTED_FILES = ["csv", "txt", "json"]
-
-# TODO: need to add the environment variable that will tell us which type (economics & finance, deep learning, etc.)
-# TODO: is the data, so that we can pull the correct keywords from our yaml
-
-# ! TODO: hack to get the ip of the minikube's host
-import socket
-
-
-def get_ip_address():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    ip = s.getsockname()[0]
-    l.info(f"host ip is {ip}")
-    return ip
-
-
-# ! ------------------ hack ends here -------------
 
 
 class NoKeywords:
@@ -66,13 +48,6 @@ class NoKeywords:
             y = yaml.load(f)
             self.config.add(y)
 
-        # !!! TODO: will fail if 1. not mongodb, 2. not minikube
-        if hostname is None:
-            # hostname = "host.minikube.internal"
-            host_ip = f"mongodb://{get_ip_address()}"
-        # ! might need to change the port too
-        self.client = MongoClient(host_ip, 27017)
-        # l.debug(f"{self.client.server_info()}")
         self.dids = json.loads(os.getenv("DIDS", "[]"))
         # ! you need to add an environment variable called ENVIRONMENT in kuberneted, that will tell
         # ! us what environment we are operating it, so that the we use correct keywords from
@@ -81,6 +56,12 @@ class NoKeywords:
         self.environment = os.getenv("ENVIRONMENT", "development")
 
     def __call__(self) -> bool:
+        """Wrapper for private _check_no_keywords. You can extra stuff here if necessary.
+
+        Returns:
+            bool: is condition met? All otuput files do not have any keywords associated
+            with their category.
+        """
         # ! do not delete from here. we might define dids after instantiation
         # ! for example, in tests
         self.dids = json.loads(os.getenv("DIDS", "[]"))
@@ -95,6 +76,16 @@ class NoKeywords:
         return is_valid
 
     def _check_no_keywords(self) -> bool:
+        """We define functions to handle different file types here. We get the list
+        of all of the files in the outputs mount and loop through them, determining
+        the file extension. Each file has to have a file extension. Once determined,
+        we read it and check if it contains the keywords. As you might have guessed,
+        the time complexity of such an approach is quite poor.
+
+        Returns:
+            bool: all the files won't have any keywords if True. If False, at least
+            one file contains at least one keyword.
+        """
         # * note that inputs here are not required, but if they are missing
         # * then other conditions won't pass so it does not hurt us to check
         # * outputs here
@@ -151,6 +142,16 @@ class NoKeywords:
         return True
 
     def check_csv(self, file_path: str) -> bool:
+        """Loops through every column name and cell value. If anything contains the
+        keyword, returns False, i.e. no keyword condition is not met
+
+        Args:
+            file_path (str): path of the .csv file to read
+
+        Returns:
+            bool: think of this as is_valid. If True, then everything is OK, and there
+            are no keywords in the file.
+        """
         l.debug(f"checking the csv file for keywords: {file_path}")
 
         f = pd.DataFrame()
@@ -200,26 +201,20 @@ class NoKeywords:
         return False
 
     def _get_did_categories(self, did: str) -> List[str]:
-        # ! TODO
-        return ["mathematics"]
-        # ! could not get pod to connect to barge's aquarius mongodb
-        # try:
-        #     db = self.client.aquarius
-        #     ddo = db.ddo
-        #     l.debug(f"looking for: 'did:op:{did}'")
-        #     r = ddo.find_one({"id": f"did:op:{did}"})
-        #     l.debug(f"found: {r=}")
-        #     service = r["service"]
-        #     meta = service[0]
-        #     if meta["type"] != "metadata":
-        #         raise ValueError(f"was expecting type metadata: {meta}")
-        #     categories = meta["attributes"]["additionalInformation"]["categories"]
+        """Brizo pulls the meta for us and gives it to us in the workflow stages input dict.
+        We then pull the category from there.
 
-        #     out = []
-        #     for category in categories:
-        #         out.append(dataCategory(category))
+        Args:
+            did (str): the identification of the input file
 
-        #     return out
-        # except Exception as e:
-        #     l.error(f"could not connect to the meta db to pull the data category: {e}")
-        #     return [""]
+        Returns:
+            List[str]: data categories pertaining to the did
+        """
+
+        categories = json.loads(os.getenv("DATA_CATEGORIES", "[]"))
+        resolved = []
+
+        for category in categories:
+            resolved.append(dataCategory(category))
+
+        return resolved

@@ -6,45 +6,8 @@ from typing import Optional, Dict
 
 from filter.conditions.no_keywords import NoKeywords
 
-DEFAULT_FAKE_META = {
-    "service": [
-        {
-            "type": "metadata",
-            "attributes": {
-                "additionalInformation": {
-                    "categories": ["Agriculture & Bio Engineering"]
-                }
-            },
-        }
-    ]
-}
 
-
-class MockDDO:
-    def __init__(self, out: Optional[Dict] = None) -> None:
-        self.out = out
-
-    def find_one(self, *args, **kwargs) -> Dict:
-        if self.out:
-            return self.out
-        return DEFAULT_FAKE_META
-
-
-class Aquarius:
-    def __init__(self, out: MockDDO) -> None:
-        self.ddo = out
-
-
-class MockClient:
-    def __init__(self, out: Optional[Dict] = None) -> None:
-        mock_ddo = MockDDO(out)
-        self.aquarius = Aquarius(mock_ddo)
-
-
-def monkey_patch_client(nk: NoKeywords, out: Optional[Dict] = None) -> NoKeywords:
-    mock_client = MockClient(out)
-    nk.client = mock_client
-    return nk
+DEFAULT_DATA_CATEGORIES = f'["Agriculture & Bio Engineering"]'
 
 
 @pytest.fixture(autouse=True)
@@ -57,10 +20,10 @@ def clean_env_vars_before_tests():
 
 def test_all_keywords():
     nk = NoKeywords()
-    nk = monkey_patch_client(nk)
 
     outputs = tempfile.mkdtemp()
 
+    os.environ["DATA_CATEGORIES"] = DEFAULT_DATA_CATEGORIES
     os.environ["OUTPUTS"] = outputs
     os.environ["DIDS"] = '["a12345678"]'
 
@@ -79,10 +42,10 @@ def test_all_keywords():
 
 def test_not_supported_file():
     nk = NoKeywords()
-    nk = monkey_patch_client(nk)
 
     outputs = tempfile.mkdtemp()
 
+    os.environ["DATA_CATEGORIES"] = DEFAULT_DATA_CATEGORIES
     os.environ["OUTPUTS"] = outputs
     os.environ["DIDS"] = '["a12345678"]'
 
@@ -103,10 +66,10 @@ def test_l33t_sp33k():
     """Currently l33t sp33k would pass
     """
     nk = NoKeywords()
-    nk = monkey_patch_client(nk)
 
     outputs = tempfile.mkdtemp()
 
+    os.environ["DATA_CATEGORIES"] = DEFAULT_DATA_CATEGORIES
     os.environ["OUTPUTS"] = outputs
     os.environ["DIDS"] = '["a12345678"]'
 
@@ -127,10 +90,10 @@ def test_l33t_sp33k():
 
 def test_multiple_files():
     nk = NoKeywords()
-    nk = monkey_patch_client(nk)
 
     outputs = tempfile.mkdtemp()
 
+    os.environ["DATA_CATEGORIES"] = DEFAULT_DATA_CATEGORIES
     os.environ["OUTPUTS"] = outputs
     os.environ["DIDS"] = '["a12345678"]'
 
@@ -157,26 +120,11 @@ def test_multiple_files():
 def test_multiple_categories():
     nk = NoKeywords()
 
-    r = {
-        "service": [
-            {
-                "type": "metadata",
-                "attributes": {
-                    "additionalInformation": {
-                        "categories": [
-                            "Agriculture & Bio Engineering",
-                            "Computer Technology",
-                        ]
-                    }
-                },
-            }
-        ]
-    }
-
-    nk = monkey_patch_client(nk, out=r)
-
     outputs = tempfile.mkdtemp()
 
+    os.environ[
+        "DATA_CATEGORIES"
+    ] = f'["Agriculture & Bio Engineering","Computer Technology"]'
     os.environ["OUTPUTS"] = outputs
     os.environ["DIDS"] = '["a12345678"]'
 
