@@ -17,19 +17,16 @@ l.addHandler(sh)
 def main():
     inputs = os.getenv("INPUTS")
     did = os.getenv("DIDS")
-
     did = did[0]
-
     l.debug(f"LISTDIR INPUTS:\n{os.listdir(inputs)}")
-
-    input_ = os.path.join(inputs, did, "0")
-
-    df1 = pd.read_csv(input_)
-    df1 = df1.apply(lambda col: col + 1)
-
+    listdir_did = os.path.join(inputs, os.listdir(inputs)[0])
+    l.debug(f"LISTDIR_DID:\n{listdir_did}")
+    full_path = os.path.join(listdir_did, os.listdir(listdir_did)[0])
+    l.debug(f"FULL_PATH:\n{full_path}")
+    df1 = pd.read_csv(full_path)
+    df1 = df1.apply(lambda col: f"{str(col)}-12345")
     outputs = os.getenv("OUTPUTS")
-
-    df1.to_csv(os.path.join(outputs, "output1.csv"))
+    df1.to_csv(os.path.join(outputs, "output1.csv"), index=False)
     l.debug(f'OUTPUTS:\n{os.listdir(os.environ["OUTPUTS"])}')
 
 
