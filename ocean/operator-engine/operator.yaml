@@ -29,15 +29,15 @@ spec:
             - name: ACCOUNT_PASSWORD
               value: somepassword
             - name: AWS_ACCESS_KEY_ID
-              value: AKIAJQLDBYUPFJLRJRCQ
+              value: oops
             - name: AWS_SECRET_ACCESS_KEY
-              value: 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
+              value: oops
             - name: AWS_REGION
               value: eu-west-2
             - name: AWS_BUCKET_OUTPUT
-              value: "ocean-output-1592491334"
+              value: actual_name_without_http
             - name: AWS_BUCKET_ADMINLOGS
-              value: "ocean-adminlogs-1592491334"
+              value: actual_diffrent_name_without_http
             - name: STORAGE_CLASS
               value: oceansc
             - name: POD_CONFIGURATION_CONTAINER
