@@ -146,6 +146,12 @@ class NotCorrelated:
         self.inputs = os.getenv("INPUTS")
         self.outputs = os.getenv("OUTPUTS")
 
+        l.debug(f"{self.epsilon=}")
+        l.debug(f"{self.inputs=}")
+        l.debug(f"{self.outputs=}")
+        l.debug(f"{os.listdir(self.inputs)=}")
+        l.debug(f"{os.listdir(self.outputs)=}")
+
         did = json.loads(os.getenv("DIDS", "[]"))
 
         if len(did) < 1:
@@ -163,6 +169,9 @@ class NotCorrelated:
                 f"{self.outputs}, but will only use the first one: "
                 f"{output_files[0]}"
             )
+
+        if len(output_files) == 0:
+            return True
 
         # ! if name changes from "0" to something else, this will fail
         # * ignoring type because mypy linter is bad in this case
