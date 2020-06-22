@@ -5,3 +5,5 @@ barge/
 operator.yaml
 *.ipynb
 .vscode/
+htmlcov/
+.coverage
