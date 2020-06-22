@@ -28,19 +28,18 @@ To have the output link after you run the jobs you need to define the following 
 
 ```yaml
 - name: AWS_ACCESS_KEY_ID
-
   value: your_key
+
 - name: AWS_SECRET_ACCESS_KEY
-
   value: your_secret_key
+
 - name: AWS_REGION
-
   value: your_region
+
 - name: AWS_BUCKET_OUTPUT
-
   value: "name_of_bucket_without_http_purely_name"
-- name: AWS_BUCKET_ADMINLOGS
 
+- name: AWS_BUCKET_ADMINLOGS
   value: "name_of_different_bucket_without_http_purely_name"
 ```
 
