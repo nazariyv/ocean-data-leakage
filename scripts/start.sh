@@ -13,7 +13,6 @@ echo '💦 CREATING OCEAN-OPERATOR AND OCEAN-COMPUTE NAMESPACES'
 kubectl create ns ocean-operator
 kubectl create ns ocean-compute
 printOcean 33
-sleep 5
 
 echo 'CREATING A DEFAULT STORAGECLASS'
 kubectl create -f storage-class/ocean-store.yaml
@@ -30,7 +29,6 @@ kubectl apply -f ocean/operator-service/deployment.yaml
 kubectl apply -f ocean/operator-service/role_binding.yaml
 kubectl apply -f ocean/operator-service/service_account.yaml
 printOcean 66
-sleep 5
 
 echo '🦈 DEPLOYING OCEAN-COMPUTE'
 kubectl config set-context --current --namespace ocean-compute
@@ -40,12 +38,13 @@ kubectl apply -f ocean/operator-engine/binding.yaml
 kubectl apply -f ocean/operator-engine/operator.yaml
 kubectl apply -f ocean/operator-engine/computejob-crd.yaml
 kubectl apply -f ocean/operator-engine/workflow-crd.yaml
-sleep 30
+
+sleep 45
 printOcean 90
 
 echo '🐳 EXPOSING OPERATOR-API PORT'
 kubectl expose deployment operator-api --namespace=ocean-operator --port=8050
-sleep 15
+sleep 10
 printOcean 100
 echo "🐙 FORWARDING LAPTOP'S 8050 PORT REQUESTS TO OPERATOR-API"
 # & is used for "parallel" execution
