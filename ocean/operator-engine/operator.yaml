@@ -71,7 +71,7 @@ spec:
                 configMapKeyRef:
                   key: POSTGRES_PORT
                   name: postgres-config
-          image: nazariyv/operator-engine:0.0.6
+          image: nazariyv/operator-engine:latest
           imagePullPolicy: Always
           name: ocean-compute-operator
           resources: {} # todo: for dev, add the $minikube addons enable metrics-server to estimate how much
