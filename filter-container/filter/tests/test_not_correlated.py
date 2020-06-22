@@ -1,9 +1,19 @@
+import pytest
 import tempfile
 import json
 import os
 
 from filter.conditions import DEFAULT_FILENAME
 from filter.conditions.not_correlated import NotCorrelated
+
+
+@pytest.fixture(autouse=True)
+def clean_env_vars_before_tests():
+    os.environ["OUTPUTS"] = ""
+    os.environ["INPUTS"] = ""
+    os.environ["DIDS"] = "[]"
+    yield
+
 
 # ? no output means the condition is not met. Is this what you would like to happen
 def test_output_not_defined():

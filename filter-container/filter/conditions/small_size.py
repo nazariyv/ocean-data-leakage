@@ -1,7 +1,7 @@
 import logging
 import os
 
-from .utils import validate_inputs_outputs
+from .utils import validate_inputs_outputs, get_size_of_dir
 
 l = logging.getLogger("[small_size]")
 
@@ -26,8 +26,9 @@ class SmallSize:
     """
 
     def __init__(self):
-        self.inputs = ""
-        self.outputs = ""
+        self.name = "SmallSize"
+        self.inputs = os.getenv("INPUTS", "")
+        self.outputs = os.getenv("OUTPUTS", "")
         self.size_threshold = DEFAULT_SMALLER_THAN_PCT
 
     def __call__(self) -> bool:
@@ -46,20 +47,13 @@ class SmallSize:
         if not is_valid:
             return False
 
-        total_inputs_size = sum(
-            os.path.getsize(os.path.join(self.inputs, f))
-            for f in os.listdir(self.inputs)
-            if os.path.isfile(os.path.join(self.inputs, f))
-        )
+        total_inputs_size = get_size_of_dir(self.inputs)
+
         if total_inputs_size < 1:
             l.error(f"size of all of the input files in {self.inputs} is zero")
             return False
 
-        total_outputs_size = sum(
-            os.path.getsize(os.path.join(self.outputs, f))
-            for f in os.listdir(self.outputs)
-            if os.path.isfile(os.path.join(self.outputs, f))
-        )
+        total_outputs_size = get_size_of_dir(self.outputs)
 
         if not total_outputs_size <= self.size_threshold * total_inputs_size:
             l.error(
@@ -93,7 +87,9 @@ class SmallSize:
         if not is_valid:
             return False
 
-        self.inputs = os.getenv("INPUTS")
-        self.outputs = os.getenv("OUTPUTS")
+        # ! do not remove from here, since in tests we define them after we instantiate
+        # ! alternatively, define them before we instantiate. in any case, no harm here
+        self.inputs = os.getenv("INPUTS", "")
+        self.outputs = os.getenv("OUTPUTS", "")
 
         return True

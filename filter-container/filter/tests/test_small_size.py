@@ -6,6 +6,14 @@ import os
 from filter.conditions.small_size import SmallSize, DEFAULT_SMALLER_THAN_PCT
 
 
+@pytest.fixture(autouse=True)
+def clean_env_vars_before_tests():
+    os.environ["OUTPUTS"] = ""
+    os.environ["INPUTS"] = ""
+    os.environ["DIDS"] = "[]"
+    yield
+
+
 def test_envs_do_not_exist():
     s = SmallSize()
     r = s()

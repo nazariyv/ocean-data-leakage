@@ -1,0 +1,23 @@
+imageName: nazariyv/operator-engine:latest
+environments:
+  development:
+    keywords:
+      agricultureBioEngineering: [agri1, agri2, agri3]
+      anthropologyAndArcheology: [anthro1, anthro2, anthro3]
+      transportation: [tran1, tran2, tran3]
+      urbanPlanning: [urba1, urba2, urba3]
+      visualArtsAndDesign: [visu1, visu2, visu3]
+      computerTechnology: [comp1, comp2, comp3]
+      mathematics:
+        [
+          mathIsTheBest,
+          fourier,
+          chaosTheory,
+          fractals,
+          complexAnalysis,
+          pdes,
+          goodStuff,
+        ]
+  testing: ""
+  acceptance: ""
+  production: ""

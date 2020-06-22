@@ -19,7 +19,7 @@ EntropyOfBlock = namedtuple(
 
 # taken from: https://github.com/ReFirmLabs/binwalk/blob/c0365350af70ac537286fabcb08a793078e60241/src/binwalk/modules/entropy.py
 # with some modifications
-class Entropy:
+class NotEncrypted:
     """Entropy class is responsible for computing entropy of any file.
     It does so by chunking the fily into byte blocks and computing the
     entropy on each block. It is foreseeable that the file may contain
@@ -33,11 +33,12 @@ class Entropy:
     DEFAULT_DATA_POINTS: ClassVar[int] = 2048
 
     def __init__(self) -> None:
+        self.name = "NotEncrypted"
         self.algorithm = shannon
         self.results: List[EntropyOfBlock] = []
         self.block_size = None
 
-    def __call__(self, file_loc: str) -> List[EntropyOfBlock]:
+    def __call__(self) -> bool:
         """The intended usage of the class is to instantiate it,
         and then call it with a file location string.
 
@@ -48,8 +49,26 @@ class Entropy:
             List[EntropyOfBlock]: Returned is list of entropy block
             namedtuples.
         """
-        self._calculate_file_entropy(file_loc)
-        return self.results
+        outputs = os.getenv("OUTPUTS")
+
+        if not outputs:
+            l.error(f"could not find output files")
+
+        for file in os.listdir(outputs):
+            self._calculate_file_entropy(
+                os.path.join(outputs, file)  # type: ignore
+            )
+
+            r = [e.entropy for e in self.results]
+
+            entropy = sum(r) / len(r)
+            if entropy > self._get_threshold():
+                l.error(
+                    "file exceeds the encryption threshold, therefore condition is not met. {}"
+                )
+                return False
+
+        return True
 
     def _calculate_file_entropy(self, file_loc: str) -> None:
         """Internal function that will calculate the entropy for file
@@ -102,3 +121,6 @@ class Entropy:
                 i += 1
                 l.debug(f"{i=}, last block entropy: {self.results[-1]=}")
                 data = f.read(block_size)
+
+    def _get_threshold(self):
+        return float(os.getenv("ENCRYPTION_ENTROPY_THRESH", 0.85))

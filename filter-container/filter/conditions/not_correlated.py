@@ -75,6 +75,9 @@ class NotCorrelated:
     will tell what a good value for this is.
     """
 
+    def __init__(self) -> None:
+        self.name = "Correlation"
+
     def __call__(self) -> bool:
         """Calls internal method to compute correlation between the files that
         uses compression bases algorithm. Uses Shannon entropy on the blocks

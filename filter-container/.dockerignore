@@ -1,4 +1,5 @@
 **/tests/*
+**/htmlcov/*
 .mypy_cache/*
 .pytest_cache/*
 **/*.md

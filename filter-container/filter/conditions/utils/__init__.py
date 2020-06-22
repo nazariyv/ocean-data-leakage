@@ -1,4 +1,5 @@
 from typing import Optional
+from enum import Enum, auto
 from math import log2
 import logging
 import os
@@ -71,4 +72,35 @@ def validate_inputs_outputs() -> bool:
     return True
 
 
-__all__ = ["EntropyAlgos", "validate_inputs_outputs"]
+def get_size_of_dir(start_path="."):
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(start_path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            # skip if it is symbolic link
+            if not os.path.islink(fp):
+                total_size += os.path.getsize(fp)
+
+    return total_size
+
+
+def dataCategory(category: str) -> str:
+    """Converts the name of the category pulled from the meta db
+    to the config yaml file compatible name. For example,
+    'Agriculture & Bio Engineering' becomes
+    'agricultureBioEngineering'. 'Sociology' becomes 'sociology'
+
+    Args:
+        category (str): category name pulled from the db
+
+    Returns:
+        str: yaml keywords config file category compatible name
+    """
+    r = category.replace("&", "").title().replace(" ", "")
+    if len(r) < 1:
+        raise ValueError(f"unknown category: {category}")
+    r = f"{r[0].lower()}{r[1:]}"
+    return r
+
+
+__all__ = ["EntropyAlgos", "validate_inputs_outputs", "FileExtension", "dataCategory"]

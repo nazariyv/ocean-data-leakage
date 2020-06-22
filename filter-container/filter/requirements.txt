@@ -1,0 +1,4 @@
+confuse==1.1.0
+# note that pandas is already baked into the alpine image
+pymongo==3.10.0
+PyYAML==5.3.1

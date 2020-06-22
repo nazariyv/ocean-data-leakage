@@ -1,2 +1,2 @@
 test:
-	python -m pytest .
+	python -m pytest --cov-report html --cov=conditions .

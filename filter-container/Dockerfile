@@ -1,9 +1,9 @@
-FROM python:3.8.3-alpine3.12
+FROM nickgryg/alpine-pandas:3.8.3
 
 WORKDIR /app
 
-COPY ./filter/ /app/
+COPY ./filter /app/filter
 
-# CMD [ "pip install -r requirements.txt --no-cache-dir --no-color" ]
+RUN pip install -r filter/requirements.txt --no-cache-dir --no-color
 
-ENTRYPOINT ["python", "/app/main.py"]
+ENTRYPOINT ["python", "-m", "filter.main"]
