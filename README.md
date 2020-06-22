@@ -20,7 +20,7 @@ I would like to thank Ocean Protocol, and particularly Alex for helping me navig
 
 [Conditions Rationale & Workings](#conditions-rationale--workings)
 
-[Video Link Where I talk about this task](#video-link-where-i-talk-about-this-task)
+[Youtube link to the video where I talk about this task](#youtube-link-to-the-video-where-i-talk-about-this-task)
 
 ## DEV
 
@@ -179,6 +179,12 @@ The time complexity of checking the size of the file, afaik, is better than chec
 
 ## Anyone wants to share in the bounty of the hack? Feel free to extend my work and ping me with questions
 
-## Video Link Where I talk about this task
+## Youtube link to the video where I talk about this task
+
+[![Watch the video](assets/red_naz_in_the_ocean.png)](https://youtu.be/ZF4BQYU0PN8)
+
+Enjoy the little crab in the ocean
 
 <div style="text-align:center"><img src="https://66.media.tumblr.com/f62f00b474ffbe5fb589d29ba0fdd0ec/tumblr_ndctwzSBuE1rraqsio1_400.gifv" /></div>
+
+P.S. blog posts that go into a bit more detail will be written on Medium in due time
