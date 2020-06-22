@@ -84,6 +84,12 @@ Congrats! Your filter data leak protection pod is running.
 
 ---
 
+[barge](https://github.com/nazariyv/barge)
+
+- to connect up brizo to operator service running in kubernetes cluster
+
+---
+
 [operator-engine](https://github.com/nazariyv/operator-engine.git)
 
 - to be able to create an additional "filter" job in between the "algorithm" and "publish" pod who sole purpose is to take the outputs of the algorithm pod and check for potential data leaks. The `4` conditions that it runs are:
@@ -106,12 +112,11 @@ Congrats! Your filter data leak protection pod is running.
 ### Neat things
 
 - Statically typed
-- Pylinted
+- Pylinted (`10.0` out of `10.0`)
 - Black formatted
 - Pytest covered 😉 (conditions folder `86%`; run `make test` fin `filter`; this will generate `htmlcov/index.html` in the same folder)
-- AAAAND
-
-# HAS ACTUAL COMMENTS
+- Light filter image
+- aaaand **HAS ACTUAL DOCUMENTED FUNCTIONS AND HAS COMMENTS**
 
 <div style="text-align:center"><img src="https://66.media.tumblr.com/85936cc9f4ddb696d391863f4c3f134b/tumblr_odtjxfgzXw1qgf1i8o1_250.gif"/></div>
 
@@ -129,6 +134,14 @@ Has `4` conditions that the algorithm output should meet:
 4. Has no keywords
 
 ### Conditions rationale & workings
+
+A note about why I dropped the `1-1` copy condition in favour of the `10%` of the original size condition (this therefore makes the total number of requirements specified on the task `5`, not `6`; and therefore, I have not implemented GDPR compliance).
+
+If you have `1-1` copy then that implies that `10%` of the dataset condition would have caught this condition even prior to it being evaluated.
+
+If your data is `10%` size or less of the original, then it is not a `1-1` copy. Therefore, there is no need in this condition.
+
+The time complexity of checking the size of the file, afaik, is better than checking a `1-1` copy. But I may be wrong, perhaps a checksum can always be calculated faster than the size computed. So don't quote me on that one.
 
 1. **Size**. Easy, all of the outputs have to be `10%` smaller than all of the inputs.
 2. **Not Encrypted**. Output after running the algo cannot be encrypted. I have decided to use entropy measure to determine if the output is encrypted. Please see the below for why we use the formula that we use (I have used `binwalk` tool as an inspiration for this)
@@ -156,6 +169,13 @@ Has `4` conditions that the algorithm output should meet:
    > > However, in some cases, the configuration might be too complex for environment variables. In such situations, we might need to fall back to files (hopefully YAML). When those cases are combined with legacy applications which are almost exclusively using file-based configuration, it is evident that we cannot rely only on environment variables.
    > >
    > > When a configuration is based on files, the best approach we can take is to bake the configuration into a Docker image. That way, we are going down the fully-immutable road. Still, that might not be possible when our application needs different configuration options for various clusters (e.g., testing and production).
+
+## Limitations of the solution
+
+1. Encryption may give false positives if threshold set too low
+2. Correlation measure is not shift invariant. If someone purely copies the input in the "wrong" byte block. Epsilon is highly heuristical.
+3. Keywords solution's time complexity is extremelu poor.
+4. In some conditions an assumption is made that only one input exists.
 
 ## Anyone wants to share in the bounty of the hack? Feel free to extend my work and ping me with questions
 
