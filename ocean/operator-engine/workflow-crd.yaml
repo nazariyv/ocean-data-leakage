@@ -60,6 +60,12 @@ spec:
                         url:
                           type: string
                           description: "The description for the url"
+                        data_categories:
+                          type: array
+                          description: "Array of data categories"
+                          items:
+                            type: string
+                            description: "data category name"
                   algorithm:
                     type: array
                     description: "The description for the algorithm"
