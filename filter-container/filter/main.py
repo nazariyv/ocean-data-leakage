@@ -13,15 +13,12 @@ l = logging.getLogger("[privacy_pod]")
 
 
 def main():
-    l.debug("initiating the filtering")
-    with open("/etc/hosts", "r") as f:
-        l.info(str(f.read()))
     l.debug(os.environ)
+
     all_conditions = [SmallSize(), NotEncrypted(), NotCorrelated(), NoKeywords()]
-    conditions_met = []
+
     for condition in all_conditions:
         l.info(f"checking {condition.name} condition...")
-
         r = condition()
 
         if not r:
